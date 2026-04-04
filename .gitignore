@@ -1,0 +1,8 @@
+# Ignore backend virtual environment and secrets
+backend/venv/
+backend/.env
+__pycache__/
+
+# Ignore frontend node modules
+frontend/node_modules/
+frontend/.env
