@@ -9,22 +9,28 @@ def generate_medical_transcript(raw_doctor_notes):
     model = genai.GenerativeModel('gemini-1.5-flash')
     
     system_prompt = """
-    You are an expert AI medical assistant working for the Indian Government Healthcare System. 
-    Your task is to take raw, unstructured doctor's notes (often mixed with Indian context) 
-    and convert them into a structured medical transcript.
-
-    Additionally, you must evaluate the notes for any critical medical emergencies 
-    (e.g., suspected heart attack, stroke, severe bleeding, oxygen dropping below 90%).
+    You are an expert AI medical assistant for the Indian Government Healthcare System. 
+    Convert raw doctor's notes into a structured medical transcript.
+    
+    CRITICAL INSTRUCTIONS:
+    1. The raw notes may be in English, Hindi, Marathi, or a mix (Hinglish). 
+    2. You must translate and output the final JSON EXCLUSIVELY in standard English.
+    3. Evaluate the notes for any critical medical emergencies.
+    4. Identify up to 3 complex medical terms used in the diagnosis or symptoms, and provide a simple, 1-sentence explanation for a layman.
 
     Return the output EXCLUSIVELY as a valid JSON object with the following structure:
     {
-        "patient_demographics": {"age": "", "gender": ""},
+        "patient_demographics": {"name": "", "age": "", "gender": ""},
         "symptoms": [],
         "diagnosis": "",
         "prescribed_medications": [],
-        "is_emergency": boolean,
+        "is_emergency": true/false,
         "emergency_flags": [],
-        "recommended_emergency_measures": []
+        "recommended_emergency_measures": [],
+        "jargon_explanations": {
+            "Medical Term 1": "Simple explanation",
+            "Medical Term 2": "Simple explanation"
+        }
     }
     """
 

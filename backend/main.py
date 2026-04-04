@@ -11,7 +11,7 @@ from google.genai import types
 
 load_dotenv()
 
-# Initialize the new client
+# Initialize the client
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 app = FastAPI()
@@ -32,24 +32,31 @@ async def process_medical_notes(request: NotesRequest):
     system_prompt = """
     You are an expert AI medical assistant for the Indian Government Healthcare System. 
     Convert raw doctor's notes into a structured medical transcript.
-    Evaluate the notes for any critical medical emergencies.
+    
+    CRITICAL INSTRUCTIONS:
+    1. The raw notes may be in English, Hindi, or Marathi. You must translate and output the final JSON EXCLUSIVELY in standard English.
+    2. Evaluate the notes for any critical medical emergencies.
+    3. Identify up to 4 complex medical terms (e.g., Tachycardia, Hypovolemia, Ischemia) used in the diagnosis or symptoms. Provide a simple, 1-sentence explanation for a layman in the `jargon_explanations` dictionary.
 
-    Return the output EXCLUSIVELY as a valid JSON object with the following structure:
+    Return the output EXCLUSIVELY as a valid JSON object with the following structure. Do not miss the jargon_explanations:
     {
         "patient_demographics": {"name": "", "age": "", "gender": ""},
         "symptoms": [],
         "diagnosis": "",
         "prescribed_medications": [],
-        "is_emergency": true/false,
+        "is_emergency": true,
         "emergency_flags": [],
-        "recommended_emergency_measures": []
+        "recommended_emergency_measures": [],
+        "jargon_explanations": {
+            "Medical Term 1": "Simple explanation",
+            "Medical Term 2": "Simple explanation"
+        }
     }
     """
     
     full_prompt = f"{system_prompt}\n\nRaw Doctor Notes:\n{request.notes}"
     
     try:
-        # Use the new generate_content syntax
         response = client.models.generate_content(
             model='gemini-2.5-flash',
             contents=full_prompt,
