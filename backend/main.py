@@ -67,3 +67,40 @@ async def process_medical_notes(request: NotesRequest):
         return json.loads(response.text)
     except Exception as e:
         return {"error": str(e)}
+        # error_msg = str(e)
+        # print(f"Backend Crash/Error: {error_msg}")
+
+        # if "503" in error_msg or "429" in error_msg:
+        #     print("Google API overloaded. Serving emergency presentation data.")
+        #     return {
+        #         "patient_demographics": {
+        #             "name": "Ramkumar", 
+        #             "age": "55", 
+        #             "gender": "Male"
+        #         },
+        #         "symptoms": [
+        #             "severe crushing chest pain",
+        #             "profuse sweating"
+        #         ],
+        #         "diagnosis": "Suspected Acute Myocardial Infarction",
+        #         "prescribed_medications": [
+        #             "Aspirin 300mg stat"
+        #         ],
+        #         "is_emergency": True,
+        #         "emergency_flags": [
+        #             "Crushing chest pain",
+        #             "High Blood Pressure (160/100)"
+        #         ],
+        #         "recommended_emergency_measures": [
+        #             "Administer Aspirin immediately",
+        #             "Urgent ECG required",
+        #             "Immediate referral to district hospital cardiology unit"
+        #         ],
+        #         "jargon_explanations": {
+        #             "Myocardial Infarction": "A heart attack caused by blocked blood flow to the heart muscle.",
+        #             "Stat": "A medical term meaning 'immediately'."
+        #         }
+        #     }
+            
+        # # If it's a different kind of error, send it to React as normal
+        # return {"error": error_msg}

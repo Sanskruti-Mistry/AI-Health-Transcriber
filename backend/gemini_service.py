@@ -1,13 +1,11 @@
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import json
 
-# Configure your API Key (Get this from Google AI Studio)
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+# 1. NEW SYNTAX: Initialize the client directly (Do not use genai.configure)
+client = genai.Client(api_key="YOUR_GEMINI_API_KEY")
 
 def generate_medical_transcript(raw_doctor_notes):
-    # We use Gemini 1.5 Flash as it is fast and highly capable for text extraction
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    
     system_prompt = """
     You are an expert AI medical assistant for the Indian Government Healthcare System. 
     Convert raw doctor's notes into a structured medical transcript.
@@ -24,7 +22,7 @@ def generate_medical_transcript(raw_doctor_notes):
         "symptoms": [],
         "diagnosis": "",
         "prescribed_medications": [],
-        "is_emergency": true/false,
+        "is_emergency": true,
         "emergency_flags": [],
         "recommended_emergency_measures": [],
         "jargon_explanations": {
@@ -34,14 +32,18 @@ def generate_medical_transcript(raw_doctor_notes):
     }
     """
 
-    # Combine the system instructions with the actual input
     full_prompt = f"{system_prompt}\n\nRaw Doctor Notes:\n{raw_doctor_notes}"
 
     try:
-        # Generate the response, forcing JSON output
-        response = model.generate_content(
-            full_prompt,
-            generation_config={"response_mime_type": "application/json"}
+        # 2. NEW SYNTAX: Use client.models.generate_content
+        # Note: Changed to 2.5-flash to avoid the 404 error we saw earlier!
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=full_prompt,
+            # 3. NEW SYNTAX: Use types.GenerateContentConfig for JSON enforcement
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+            )
         )
         
         # Parse the JSON response
@@ -52,7 +54,6 @@ def generate_medical_transcript(raw_doctor_notes):
         return {"error": str(e)}
 
 # --- Example Usage ---
-# Simulating raw notes from a Primary Health Centre (PHC)
 sample_input = """
 Patient is a 55 year old male, Ramkumar. Complaining of severe crushing chest pain 
 radiating to the left arm for the last 45 minutes. Sweating profusely. BP is 160/100. 
