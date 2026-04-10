@@ -185,8 +185,3 @@ Frontend runs on: http://localhost:5173
 - Advanced emergency prediction using ML models
 - Patient history tracking system
 
----
-
-## 👨‍💻 Author
-
-Built as a real-world impactful healthcare AI project.
